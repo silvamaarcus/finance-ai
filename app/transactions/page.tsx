@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-const Transactions = () => {
+const TransactionsPage = () => {
   return <div>Transactions page</div>;
 };
 
-export default Transactions;
+export default TransactionsPage;
