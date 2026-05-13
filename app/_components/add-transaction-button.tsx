@@ -8,6 +8,7 @@ import {
 } from '@prisma/client';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { ArrowDownUpIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -31,6 +32,7 @@ import {
 } from '@/app/_components/ui/form';
 import { Input } from '@/app/_components/ui/input';
 
+import { addTransaction } from '../_actions/add-transaction';
 import {
   TRANSACTION_CATEGORY_OPTIONS,
   TRANSACTION_PAYMENT_METHOD_OPTIONS,
@@ -49,7 +51,7 @@ import {
 // Validacao com Zod
 const formSchema = z.object({
   name: z.string().trim().min(1, 'O nome é obrigatório'),
-  amount: z.string().trim().min(1, 'O valor é obrigatório'),
+  amount: z.number(),
   type: z.enum(TransactionType, {
     error: 'O tipo de transação é obrigatório',
   }),
@@ -65,11 +67,13 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const AddTransactionButton = () => {
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      amount: '',
+      amount: 0,
       type: TransactionType.EXPENSE,
       category: TransactionCategory.OTHER,
       paymentMethod: TransactionMethod.OTHER,
@@ -77,14 +81,21 @@ const AddTransactionButton = () => {
     },
   });
 
-  const onSubmit = (data: FormSchema) => {
-    console.log('Dados do formulário:', data);
+  const onSubmit = async (data: FormSchema) => {
+    try {
+      await addTransaction(data);
+      setDialogIsOpen(false); // Fecha o diálogo após adicionar a transação
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <>
       <Dialog
+        open={dialogIsOpen}
         onOpenChange={(open) => {
+          setDialogIsOpen(open); // Atualiza o estado do diálogo para controlar sua abertura e fechamento
           if (!open) {
             form.reset();
           }
@@ -128,7 +139,15 @@ const AddTransactionButton = () => {
                   <FormItem>
                     <FormLabel>Valor</FormLabel>
                     <FormControl>
-                      <MoneyInput placeholder="Valor da transação" {...field} />
+                      <MoneyInput
+                        placeholder="Valor da transação"
+                        value={field.value}
+                        onValueChange={({ floatValue }) => {
+                          field.onChange(floatValue ?? 0);
+                        }} // Atualiza o valor do campo "amount" com o valor formatado do MoneyInput
+                        onBlur={field.onBlur} // Garante que a validação seja acionada ao perder o foco
+                        disabled={field.disabled} // Desabilita o campo durante o envio do formulário
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -238,10 +257,10 @@ const AddTransactionButton = () => {
                 )}
               />
               <DialogFooter>
+                <Button>Adicionar</Button>
                 <DialogClose asChild>
                   <Button variant="outline">Cancelar</Button>
                 </DialogClose>
-                <Button>Adicionar</Button>
               </DialogFooter>
             </form>
           </Form>
