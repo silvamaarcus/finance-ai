@@ -24,6 +24,7 @@ model Transaction {
   date          DateTime // Data da transação (timestamp: data e hora)
   createdAt     DateTime            @default(now()) // Data de criação da transação
   updatedAt     DateTime            @updatedAt // Data de atualização da transação
+  userId        String // ID do usuário que realizou a transação
 }
 
 // Enum para os tipos de transação
