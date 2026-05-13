@@ -2,14 +2,15 @@
 
 import { Transaction } from '@prisma/client'; // importação do tipo Transaction do Prisma para tipar as colunas da tabela
 import { ColumnDef } from '@tanstack/react-table';
+import { TrashIcon } from 'lucide-react';
 
-// import { TrashIcon } from 'lucide-react';
-// import { Button } from '@/app/_components/ui/button';
+import { Button } from '@/app/_components/ui/button';
 import {
   TRANSACTION_CATEGORY_LABELS,
   TRANSACTION_PAYMENT_METHOD_LABELS,
 } from '@/app/_constants/transactions';
 
+import EditTransactionButton from '../_components/edit-transaction-button';
 import TransactionTypeBadge from '../_components/type-badge';
 
 export const transactionColumns: ColumnDef<Transaction>[] = [
@@ -58,15 +59,15 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'actions',
     header: 'Ações',
-    // cell: ({ row: { original: transaction } }) => {
-    //   return (
-    //     <div className="space-x-1">
-    //       {/* <EditTransactionButton transaction={transaction} /> */}
-    //       <Button variant="ghost" size="icon" className="text-muted-foreground">
-    //         <TrashIcon />
-    //       </Button>
-    //     </div>
-    //   );
-    // },
+    cell: ({ row: { original: transaction } }) => {
+      return (
+        <div className="space-x-1">
+          <EditTransactionButton transaction={transaction} />
+          <Button variant="ghost" size="icon" className="text-muted-foreground">
+            <TrashIcon />
+          </Button>
+        </div>
+      );
+    },
   },
 ];
