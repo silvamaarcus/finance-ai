@@ -11,7 +11,7 @@ const AddTransactionButton = () => {
 
   return (
     <>
-      <Button>
+      <Button onClick={() => setDialogIsOpen(true)}>
         Adicionar transação
         <ArrowDownUpIcon className="ml-2" />
       </Button>
