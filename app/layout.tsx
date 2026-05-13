@@ -28,7 +28,7 @@ export default function RootLayout({
             baseTheme: dark,
           }} // Define o tema escuro para o UserButton do Clerk
         >
-          {children}
+          <div className="flex h-full flex-col overflow-hidden">{children}</div>
         </ClerkProvider>
       </body>
     </html>
