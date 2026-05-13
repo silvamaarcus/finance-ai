@@ -32,16 +32,16 @@ export const upsertTransaction = async (params: UpsertTransactionParams) => {
   }
 
   await db.transaction.upsert({
-    // Se um ID for fornecido, o Prisma tentará encontrar uma transação existente com esse ID para atualizar. Se nenhum ID for fornecido, o Prisma criará uma nova transação.
-    where: {
-      id: params.id,
-    },
     // Se a transação já existir (ou seja, se um ID válido for fornecido), atualizar os campos com os novos valores
     update: { ...params, userId },
     // Se a transação não existir (ou seja, se nenhum ID for fornecido), criar uma nova transação com os dados fornecidos e associá-la ao usuário autenticado
     create: {
       ...params,
       userId,
+    },
+    // Se um ID for fornecido, o Prisma tentará encontrar uma transação existente com esse ID para atualizar. Se nenhum ID for fornecido, o Prisma criará uma nova transação.
+    where: {
+      id: params?.id ?? '', // Pode ser vazio para criar uma nova transação.
     },
   });
   revalidatePath('/transactions'); // Revalidar a rota de transações para garantir que as alterações sejam refletidas na interface do usuário
