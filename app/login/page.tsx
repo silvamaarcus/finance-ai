@@ -1,9 +1,18 @@
+import { SignInButton } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { LogInIcon } from 'lucide-react';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 
 import { Button } from '../_components/ui/button';
 
-const LoginPage = () => {
+const LoginPage = async () => {
+  const { userId } = auth(); // Verifica se o usuário está autenticado
+  // Se o usuário já estiver autenticado, redireciona para a página inicial
+  if (userId) {
+    redirect('/');
+  }
+
   return (
     <div className="grid h-full grid-cols-2">
       {/* ESQUERDA */}
@@ -24,10 +33,12 @@ const LoginPage = () => {
           facilitando o controle do seu orçamento.
         </p>
 
-        <Button variant="outline" className="w-full">
-          <LogInIcon className="mr-2" />
-          Fazer login ou criar conta
-        </Button>
+        <SignInButton>
+          <Button variant="outline" className="w-full">
+            <LogInIcon className="mr-2" />
+            Fazer login ou criar conta
+          </Button>
+        </SignInButton>
       </div>
 
       {/* DIREITA */}
