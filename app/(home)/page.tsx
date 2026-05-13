@@ -26,7 +26,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
   // Verifica se o mês é inválido (ou seja, se não foi fornecido ou se não corresponde ao formato "MM")
   const monthIsInvalid = !month || !isMatch(month, 'MM');
   if (monthIsInvalid) {
-    redirect('?month=01');
+    redirect(`?month=${new Date().getMonth() + 1}`); // Redireciona para a mesma página com o mês atual como parâmetro
   }
 
   const dashboard = await getDashboard(month); // Busca os dados do dashboard com base no mês selecionado
