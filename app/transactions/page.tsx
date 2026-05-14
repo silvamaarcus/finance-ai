@@ -5,6 +5,7 @@ import AddTransactionButton from '../_components/add-transaction-button';
 import Navbar from '../_components/navbar';
 import { DataTable } from '../_components/ui/data-table';
 import { ScrollArea } from '../_components/ui/scroll-area';
+import { canUserAddTransaction } from '../_data/can-user-add-transaction';
 import { db } from '../_lib/prisma';
 import { transactionColumns } from './_columns';
 
@@ -17,6 +18,7 @@ const TransactionsPage = async () => {
   // acessar as transações do banco de dados
   const transactions = await db.transaction.findMany({}); // consulta para buscar todas as transações
 
+  const userCanAddTransaction = await canUserAddTransaction();
   return (
     <>
       <Navbar />
@@ -24,8 +26,7 @@ const TransactionsPage = async () => {
         {/* TITULO E BOTAO */}
         <div className="flex w-full items-center justify-between">
           <h1 className="text-2xl font-bold">Transações</h1>
-
-          <AddTransactionButton />
+          <AddTransactionButton userCanAddTransaction={userCanAddTransaction} />
         </div>
         {/* TABELA DE TRANSACOES */}
         <ScrollArea>
