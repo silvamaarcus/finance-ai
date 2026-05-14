@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { isMatch } from 'date-fns';
 import { redirect } from 'next/navigation';
 
@@ -35,6 +35,8 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
 
   const userCanAddTransaction = await canUserAddTransaction(); // Verifica se o usuário tem permissão para adicionar uma transação
 
+  const user = await clerkClient().users.getUser(userId); // Obtém os dados do usuário autenticado usando o Clerk
+
   return (
     <>
       <Navbar />
@@ -42,7 +44,12 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <div className="flex items-center gap-3">
-            <AiReportButton month={month} />
+            <AiReportButton
+              month={month}
+              hasPremiumPlan={
+                user.publicMetadata.subscriptionPlan === 'premium'
+              }
+            />
             <TimeSelect />
           </div>
         </div>
